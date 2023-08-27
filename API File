@@ -1,0 +1,83 @@
+!pip install gmaps
+!pip install googlemaps
+
+import requests
+apikey = 'AIzaSyCbHMXlojYEJn94poaxLRKAXhk79ln4H7A'
+
+originaddress = input("Enter your starting destination. Make sure to add the city and province/state: ")
+destinationaddress = input('Enter your ending destination. Make sure to add the city and province/state: ')
+
+originparams = {
+    'key': apikey,
+    'address' : originaddress
+}
+
+baseurl = 'https://maps.googleapis.com/maps/api/geocode/json?'
+response = requests.get(baseurl, params=originparams).json()
+
+if response['status'] == 'OK':
+  geometry = response['results'][0]['geometry']
+  latorigin = geometry['location']['lat']
+  lonorigin = geometry['location']['lng']
+
+print(latorigin, lonorigin)
+
+destinationparams = {
+    'key': apikey,
+    'address' : destinationaddress
+}
+
+response2 = requests.get(baseurl, params=destinationparams).json()
+
+if response2['status'] == 'OK':
+  geometry = response2['results'][0]['geometry']
+  latdes = geometry['location']['lat']
+  londes = geometry['location']['lng']
+
+print(latdes, londes)
+
+import gmaps
+
+gmaps.configure(api_key=apikey)
+
+
+fig = gmaps.figure()
+origin = (latorigin, lonorigin)
+destination = (latdes, londes)
+layer = gmaps.directions.Directions(origin, destination, travel_mode="TRANSIT", avoid="ferries")
+layer2 = gmaps.directions.Directions(origin, destination, travel_mode="WALKING", avoid="ferries")
+layer3 = gmaps.directions.Directions(origin, destination, travel_mode="DRIVING", avoid="ferries")
+layer4 = gmaps.directions.Directions(origin, destination, travel_mode="BICYCLING", avoid="ferries")
+
+fig.add_layer(layer)
+#fig.add_layer(layer2)
+#fig.add_layer(layer3)
+#fig.add_layer(layer4)
+
+from google.colab import output
+output.enable_custom_widget_manager()
+
+
+fig
+
+import googlemaps
+from datetime import datetime
+
+gmaps_client = googlemaps.Client(key = "AIzaSyCbHMXlojYEJn94poaxLRKAXhk79ln4H7A")
+
+now = datetime.now()
+
+biking_result = gmaps_client.directions(origin, destination, mode="bicycling", avoid = 'ferries', departure_time="now")
+transit_result = gmaps_client.directions(origin, destination, mode="transit", avoid = 'ferries', departure_time="now")
+driving_result = gmaps_client.directions(origin, destination, mode="driving", avoid = 'ferries', departure_time="now")
+
+
+
+print(biking_result[0]['legs'][0]['distance'])
+print(biking_result[0]['legs'][0]['duration'])
+
+print(transit_result[0]['legs'][0]['distance'])
+print(transit_result[0]['legs'][0]['duration'])
+
+print(driving_result[0]['legs'][0]['distance'])
+print(driving_result[0]['legs'][0]['duration'])
