@@ -4,6 +4,7 @@
 import requests
 apikey = 'AIzaSyCbHMXlojYEJn94poaxLRKAXhk79ln4H7A'
 
+#Map and Routing
 originaddress = input("Enter your starting destination. Make sure to add the city and province/state: ")
 destinationaddress = input('Enter your ending destination. Make sure to add the city and province/state: ')
 
@@ -59,6 +60,8 @@ output.enable_custom_widget_manager()
 
 
 fig
+
+#Distance and Time Calculations
 
 import googlemaps
 from datetime import datetime
