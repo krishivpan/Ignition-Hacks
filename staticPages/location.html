@@ -1,16 +1,19 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
     </style>
+    <head>
+        <script src="globals.js" type="module"></script>
+    </head>
     <body>
         <div class="Location" style="width: 360px; height: 640px; position: relative; background: #F9FBFA; border-radius: 10px; overflow: hidden">
             <div class="Rectangle137" style="width: 360px; height: 640px; left: 0px; top: 0px; position: absolute; background: #F9FBFA"></div>
             <div class="StartLocation" style="left: 19px; top: 111px; position: absolute; color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">Start location</div>
             <div class="Frame6" style="width: 300px; height: 35px; padding-left: 10px; padding-right: 10px; padding-top: 6px; padding-bottom: 6px; left: 16px; top: 155px; position: absolute; background: #F9FBFA; border-radius: 10px; border: 0.75px #384742 solid; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-                <input type="text" class="TextfieldInput" style="color: #708F85; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word; border: none; outline: none; background: transparent; width: 100%;" placeholder="Enter start location">
+                <input type="text" class="TextfieldInput" id="startLocationInput" style="color: #708F85; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word; border: none; outline: none; background: transparent; width: 100%;" placeholder="Enter start location">
             </div>
             <div class="EndLocation" style="left: 19px; top: 245px; position: absolute; color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">End location</div>
             <div class="Frame7" style="width: 300px; height: 35px; padding-left: 10px; padding-right: 10px; padding-top: 6px; padding-bottom: 6px; left: 16px; top: 289px; position: absolute; background: #F9FBFA; border-radius: 10px; border: 0.75px #384742 solid; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
-                <input type="text" class="TextfieldInput" style="color: #708F85; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word; border: none; outline: none; background: transparent; width: 100%;" placeholder="Enter end location">
+                <input type="text" class="TextfieldInput" id="endLocationInput" style="color: #708F85; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word; border: none; outline: none; background: transparent; width: 100%;" placeholder="Enter end location">
             </div>
             <div class="Vehicle" style="left: 16px; top: 379px; position: absolute; color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">Vehicle</div>
             <div class="Frame18" style="width: 300px; height: 35px; padding-left: 10px; padding-right: 10px; padding-top: 6px; padding-bottom: 6px; left: 16px; top: 423px; position: absolute; background: #F9FBFA; border-radius: 10px; border: 0.75px #384742 solid; justify-content: flex-start; align-items: center; gap: 10px; display: inline-flex">
@@ -26,8 +29,89 @@
             </div>
             <a href="/option.html">
                 <div class="Frame17" style="width: 183px; height: 45px; padding-left: 10px; padding-right: 10px; padding-top: 6px; padding-bottom: 6px; left: 84px; top: 549px; position: absolute; background: #222B28; border-radius: 10px; border: 0.50px #222B28 solid; justify-content: center; align-items: center; gap: 5px; display: inline-flex">
-                <div class="TakeMeThere" style="color: #F9FBFA; font-size: 20px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Take me there!</div>
+                    <div class="TakeMeThere" style="color: #F9FBFA; font-size: 20px; font-family: Poppins; font-weight: 500; word-wrap: break-word" onclick="sendLocationsToFlask()">Take me there!</div>
                 </div>
             </a>
           </div>
+          <script>
+            function updateLocations() {
+                const startLocationInput = document.getElementById('startLocationInput');
+                const endLocationInput = document.getElementById('endLocationInput');
+        
+                const startLocation = startLocationInput.value;
+                const endLocation = endLocationInput.value;
+        
+                setStartLocation(startLocation);
+                setEndLocation(endLocation);
+        
+                // Store locations in Local Storage
+                localStorage.setItem('startLocation', startLocation);
+                localStorage.setItem('endLocation', endLocation);
+        
+                // Update the displayed values
+                document.getElementById('displayStartLocation').textContent = startLocation;
+                document.getElementById('displayEndLocation').textContent = endLocation;
+
+                // Make an HTTP request to the server
+                fetch('/update-locations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        startLocation: startLocation,
+                        endLocation: endLocation
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server response:', data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+    
+        
+            // On page load, check if locations are already stored and display them
+            window.onload = function() {
+                const storedStartLocation = localStorage.getItem('startLocation');
+                const storedEndLocation = localStorage.getItem('endLocation');
+        
+                if (storedStartLocation) {
+                    document.getElementById('displayStartLocation').textContent = storedStartLocation;
+                }
+        
+                if (storedEndLocation) {
+                    document.getElementById('displayEndLocation').textContent = storedEndLocation;
+                }
+            }
+
+            function sendLocationsToFlask() {
+                const startLocationInput = document.getElementById('startLocationInput');
+                const endLocationInput = document.getElementById('endLocationInput');
+
+                const startLocation = startLocationInput.value;
+                const endLocation = endLocationInput.value;
+
+                // Make an HTTP request to the Flask server
+                fetch('/send-locations', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        startLocation: startLocation,
+                        endLocation: endLocation
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server response:', data);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
+        </script>
     </body>
