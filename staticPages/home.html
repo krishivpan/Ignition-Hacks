@@ -23,21 +23,33 @@
               <div class="Rectangle113" style="width: 19px; height: 19px; left: 15px; top: 17px; position: absolute; background: #384742"></div>
               <div class="Greenpal" style="left: 42px; top: 15px; position: absolute; text-align: center; color: #384742; font-size: 16px; font-family: Poppins; font-weight: 500; word-wrap: break-word">Emtrack</div>
             </div>
-            <div class="NameYouHaveSaved46TonsOfCo2" style="width: 327px; left: 17px; top: 66px; position: absolute"><span style="color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">Name, you have saved </span><span style="color: #189A46; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">4.6 tons</span><span style="color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word"> of CO</span><span style="color: black; font-size: 12px; font-family: Poppins; font-weight: 500; line-height: 15.96px; word-wrap: break-word">2</span></div>
+            <div class="NameYouHaveSaved46TonsOfCo2" style="width: 327px; left: 17px; top: 66px; position: absolute"><span style="color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">Name</span><span style="color: #189A46; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word">, you have saved 4.6 tons</span><span style="color: black; font-size: 25px; font-family: Poppins; font-weight: 500; line-height: 33.25px; word-wrap: break-word"> of CO</span><span style="color: black; font-size: 12px; font-family: Poppins; font-weight: 500; line-height: 15.96px; word-wrap: break-word">2</span></div>
             <div class="Ncp3uncewfm" style="width: 1920px; height: 1280px; left: -600px; top: -150px; position: absolute"></div>
             <div class="StartTrip" style="left: 132px; top: 537px; position: absolute; text-align: center; color: #384742; font-size: 20px; font-family: Poppins; font-weight: 500; letter-spacing: 0.10px; word-wrap: break-word">Start trip</div>
           
 
             <div class="start" style="width: 106px; height: 106px; left: 119px; top: 427px; position: absolute">
                 <div class="Ellipse1" style="width: 106px; height: 106px; left: 0px; top: 0px; position: absolute; background: #189A46; border-radius: 9999px"></div>
-                <img class="arrow" style="width: 30; height: 45; left: 40px; top: 35px; position: absolute" src="rightarrow.png" />
-
-              </div>
+                <a href="location.html"> <!-- Add an anchor tag with the destination page -->
+                    <img class="arrow" style="width: 30; height: 45; left: 40px; top: 35px; position: absolute" src="rightarrow.png" />
+                </a>
             </div>
             <div class="Frame7" style="padding-left: 6px; padding-right: 6px; padding-top: 4px; padding-bottom: 4px; left: 17px; top: 144px; position: absolute; background: #F9FBFA; border-radius: 5px; border: 0.50px #708F85 solid; justify-content: center; align-items: center; gap: 5px; display: inline-flex">
               <div class="Vector" style="width: 12px; height: 12px; background: #708F85"></div>
               <div class="Label" style="color: #708F85; font-size: 10px; font-family: Poppins; font-weight: 500; letter-spacing: 0.05px; word-wrap: break-word">see trips</div>
             </div>
           </div>
+          <script>
+            // Get the stored username and name from local storage
+            const loggedInUsername = localStorage.getItem("loggedInUsername") || "Guest";
+            const loggedInName = localStorage.getItem("loggedInName") || "Guest";
+
+            // Update the corresponding elements with the retrieved data
+            const usernameSpan = document.querySelector(".Username21342348 span");
+            const nameSpan = document.querySelector(".NameYouHaveSaved46TonsOfCo2 span");
+
+            usernameSpan.textContent = loggedInUsername;
+            nameSpan.textContent = loggedInName;
+        </script>
     </body>
 </html>
