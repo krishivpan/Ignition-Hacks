@@ -1,27 +1,73 @@
 from flask import Flask, request, jsonify
-import sqlite3
+from flask_cors import CORS, cross_origin
+import json
+import bson
+import requests
+import googlemaps
+from datetime import datetime
 
 app = Flask(__name__)
+CORS(app, origins="*", supports_credentials=True, methods=['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'])
 
-@app.route('/send-locations', methods=['POST'])
+@app.route('/send-locations', methods=['POST', 'GET'])
+@cross_origin(origin='*')
 def send_locations():
-    data = request.json
+    print("hello")
+    if(request.method == "POST"):
+        print("hey")
 
-    start_location = data['startLocation']
-    end_location = data['endLocation']
+        data = request.get_data
+        print(data)
+        start_location = data['startLocation']
+        end_location = data['endLocation']
 
-    # Connect to the SQLite database
-    connection = sqlite3.connect('locations.db')
-    cursor = connection.cursor()
+        # Print the received locations
+        print("Received start location:", start_location)
+        print("Received end location:", end_location)
 
-    # Insert the locations into the database
-    cursor.execute("INSERT INTO locations (start_location, end_location) VALUES (?, ?)",
-                   (start_location, end_location))
-    
-    connection.commit()
-    connection.close()
+        # Google Maps API key
+        apikey = 'AIzaSyCbHMXlojYEJn94poaxLRKAXhk79ln4H7A'
 
-    return jsonify({'message': 'Locations saved successfully'})
+        # Connect to the Google Maps API client
+        gmaps_client = googlemaps.Client(key=apikey)
+
+        # Origin and destination addresses
+        originaddress = start_location
+        destinationaddress = end_location
+
+        # Get origin and destination coordinates
+        origin_result = gmaps_client.geocode(originaddress)
+        destination_result = gmaps_client.geocode(destinationaddress)
+
+        if origin_result and destination_result:
+            origin = origin_result[0]['geometry']['location']
+            destination = destination_result[0]['geometry']['location']
+        else:
+            print("Invalid addresses.")
+
+        # Get directions and details
+        biking_result = gmaps_client.directions(origin, destination, mode="bicycling", avoid='ferries', departure_time="now")[0]['legs'][0]
+        transit_result = gmaps_client.directions(origin, destination, mode="transit", avoid='ferries', departure_time="now")[0]['legs'][0]
+        driving_result = gmaps_client.directions(origin, destination, mode="driving", avoid='ferries', departure_time="now")[0]['legs'][0]
+
+        # Print distance and duration details
+        print("Biking:")
+        print("Distance:", biking_result['distance']['text'])
+        print("Duration:", biking_result['duration']['text'])
+
+        print("Transit:")
+        print("Distance:", transit_result['distance']['text'])
+        print("Duration:", transit_result['duration']['text'])
+
+        print("Driving:")
+        print("Distance:", driving_result['distance']['text'])
+        print("Duration:", driving_result['duration']['text'])
+
+
+        response = {'message': 'Data received successfully'}
+        print("hi")
+        return json.loads(bson.json_util.dumps(response))
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}                            
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
